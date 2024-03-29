@@ -1,0 +1,15 @@
+{
+    "terminales": ["a", "b"],
+    "noTerminales": ["A", "B"],
+    "inicial": "A",
+    "producciones": [
+        {
+            "simbolo": "A",
+            "produce": ["aA", "bB"]
+        },
+        {
+            "simbolo": "B",
+            "produce": ["b", "bB"]
+        }
+    ]
+}
