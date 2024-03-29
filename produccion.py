@@ -4,11 +4,11 @@ class Produccion:
         self.produccion = produccion
     
     def __str__(self):
-        return self.simbolo + " -> " + self.produccion
-            
+        return "Simbolo: " + str(self.simbolo) + " -> " + "Produccion: " + str(self.produccion)
+                    
     def es_recursiva_izquierda(self):
-        #si la produccion es de la forma A -> A...
-        if self.simbolo == self.produccion[0]:
-            return True
-        else:
-            return False
+        for prod in self.produccion:
+            if prod.startswith(self.simbolo):
+                return True
+        return False
+    

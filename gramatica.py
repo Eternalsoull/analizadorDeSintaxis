@@ -6,6 +6,8 @@ class Gramatica:
         self.producciones = producciones
         self.inicial = inicial
         
+        
+        
     def __str__(self):
         return "Terminales: " + str(self.terminales) + "\nNo terminales: " + str(self.noTerminales) + "\nProducciones: " + str(self.producciones) + "\nInicial: " + str(self.inicial)
     
@@ -14,6 +16,8 @@ class Gramatica:
     
     def verificarPalabra(self, palabra):
         return self.verificarPalabraRecursivo(palabra, self.inicial)
+    
+    
     
     def verificarPalabraRecursivo(self, palabra, simbolo):
         # si la palabra esta vacia, entonces el simbolo debe ser no term
@@ -35,23 +39,45 @@ class Gramatica:
             return False
     
     
-    def eliminar_recursion_izquierda(self):
+    def eliminar_recursion_izquierda(self, producciones):
         nuevas_producciones = []
-        for produccion in self.producciones:
+        producciones_recursivas = []
+        producciones_no_recursivas = []
+        simbolos_recursiva = []
+        for produccion in producciones:
             if produccion.es_recursiva_izquierda():
-                recursivas = []
-                no_recursivas = []
-                for p in produccion.producciones:
-                    if p.es_recursiva_izquierda():
-                        recursivas.append(p)
-                    else:
-                        no_recursivas.append(p)
-                nuevo_simbolo = produccion.simbolo + "'"
-                for p in no_recursivas:
-                    nuevas_producciones.append(Produccion(produccion.simbolo, p.derecha + nuevo_simbolo))
-                for p in recursivas:
-                    nuevas_producciones.append(Produccion(nuevo_simbolo, p.derecha[1:] + nuevo_simbolo))
-                nuevas_producciones.append(Produccion(nuevo_simbolo, ""))
+                producciones_recursivas.append(produccion)
             else:
-                nuevas_producciones.append(produccion)
-        self.producciones = nuevas_producciones 
+                producciones_no_recursivas.append(produccion)
+                
+        simbolo_recursiva = ''
+        for produccion_recursiva in producciones_recursivas:
+            simbolos_recursiva.append(produccion_recursiva.simbolo)
+            simbolo_recursiva = produccion_recursiva.simbolo
+            simbolo_nuevo = simbolo_recursiva + "'"
+            self.noTerminales.append(simbolo_nuevo)
+            # guardo el simbolo que se va a reemplazar para buscarlo en las producciones no recursivas
+            for produccion_no_recursiva in producciones_no_recursivas:
+                if produccion_no_recursiva.simbolo == simbolo_recursiva:
+                    
+                    alfa = produccion_recursiva.produccion[1:]
+                    beta = produccion_no_recursiva.produccion
+                    nuevaProduccion1= Produccion(simbolo_recursiva, beta + simbolo_nuevo)
+                    nuevaProduccion2= Produccion(simbolo_nuevo, alfa + simbolo_nuevo)
+                    nuevaProduccion3= Produccion(simbolo_nuevo, 'λ')
+                    nuevas_producciones.append(nuevaProduccion1)
+                    nuevas_producciones.append(nuevaProduccion2)
+                    nuevas_producciones.append(nuevaProduccion3)     
+            else:
+                nuevas_producciones.append(produccion)    
+        
+        self.producciones = nuevas_producciones
+        print("Simbolos recursivos: ", simbolos_recursiva)  
+        #imprimir los no terminales
+        print("No terminales: ", self.noTerminales)
+        #imprimimos todas las producciones
+        print("Producciones todas: " )
+        for produccion in self.producciones:
+            print(produccion)   
+        return nuevas_producciones
+

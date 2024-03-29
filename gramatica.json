@@ -5,11 +5,19 @@
     "producciones": [
         {
             "simbolo": "A",
-            "produce": ["aA", "bB"]
+            "produce": "Aa"
+        },
+        {
+            "simbolo": "A",
+            "produce": "x"
         },
         {
             "simbolo": "B",
-            "produce": ["b", "bB"]
+            "produce": "Bb"
+        },
+        {
+            "simbolo": "B",
+            "produce": "y"
         }
     ]
 }
