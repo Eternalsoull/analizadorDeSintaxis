@@ -1,15 +1,15 @@
-import json
+from produccion import Produccion
 class Gramatica:
-    def _init_(self, terminales, noTerminales, producciones, inicial):
+    def __init__(self, terminales, noTerminales, producciones, inicial):
         self.terminales = terminales
         self.noTerminales = noTerminales
         self.producciones = producciones
         self.inicial = inicial
         
-    def _str_(self):
+    def __str__(self):
         return "Terminales: " + str(self.terminales) + "\nNo terminales: " + str(self.noTerminales) + "\nProducciones: " + str(self.producciones) + "\nInicial: " + str(self.inicial)
     
-    def _repr_(self):
+    def __repr__(self):
         return self._str_()
     
     def verificarPalabra(self, palabra):
@@ -33,4 +33,25 @@ class Gramatica:
                         if self.verificarPalabraRecursivo(palabra, produccion.produccion):
                             return True
             return False
-        
+    
+    
+    def eliminar_recursion_izquierda(self):
+        nuevas_producciones = []
+        for produccion in self.producciones:
+            if produccion.es_recursiva_izquierda():
+                recursivas = []
+                no_recursivas = []
+                for p in produccion.producciones:
+                    if p.es_recursiva_izquierda():
+                        recursivas.append(p)
+                    else:
+                        no_recursivas.append(p)
+                nuevo_simbolo = produccion.simbolo + "'"
+                for p in no_recursivas:
+                    nuevas_producciones.append(Produccion(produccion.simbolo, p.derecha + nuevo_simbolo))
+                for p in recursivas:
+                    nuevas_producciones.append(Produccion(nuevo_simbolo, p.derecha[1:] + nuevo_simbolo))
+                nuevas_producciones.append(Produccion(nuevo_simbolo, ""))
+            else:
+                nuevas_producciones.append(produccion)
+        self.producciones = nuevas_producciones 
